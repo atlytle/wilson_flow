@@ -1,4 +1,5 @@
 import sys
+import itertools
 import numpy as np
 from os.path import getsize
 
@@ -28,15 +29,28 @@ def readfort(file):
     f.close()
     return tmp
 
+def fort_id(j,i,x):
+    "Index structure of binary configurations."
+    return j*2*Nsite*4 + i*Nsite*4 + x
+
+new_ids = [fort_id(j,i,x) for x,i,j in itertools.product(
+                                       range(4*Nsite), range(2), range(3))]
 
 def main(files):
 
     tmp = readfort(files[0])
     v = tmp[0], tmp[2*4*Nsite], tmp[4*4*Nsite]
+    print v
     print np.inner(v, np.conj(v))
+    tmp2 = tmp[new_ids]
+    print tmp2[0], tmp2[1], tmp2[2]
+    v2 = tmp2[3], tmp2[4], tmp2[5]  # Second row of first matrx.
+    print np.inner(v2, np.conj(v2))
+    print np.inner(v, np.conj(v2))
 
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+
