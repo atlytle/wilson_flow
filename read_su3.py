@@ -47,9 +47,9 @@ def main(files):
     v = tmp[0], tmp[2*4*Nsite], tmp[4*4*Nsite]
     print v
     print np.inner(v, np.conj(v))
-    tmp2 = tmp[new_ids]
-    print tmp2[0], tmp2[1], tmp2[2]
-    v2 = tmp2[3], tmp2[4], tmp2[5]  # Second row of first matrx.
+    dat = tmp[new_ids]
+    print dat[0], dat[1], dat[2]
+    v2 = dat[3], dat[4], dat[5]  # Second row of first matrx.
     print np.inner(v2, np.conj(v2))
     print np.inner(v, np.conj(v2))
 
@@ -57,8 +57,14 @@ def main(files):
     assert x.shape == (3,3)
     print np.dot(x, np.conj(np.transpose(x)))
 
-    return 0
+    # Reconstruct matrices.
+    dat = dat.reshape(4*Nsite,2,3)
+    dat = np.array(map(lambda x:matrec(x[0],x[1]), dat))
+    assert dat.shape == (4*Nsite,3,3)
+    print np.dot(dat[42], np.conj(np.transpose(dat[42])))
 
+    return 0
+    
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
