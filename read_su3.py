@@ -36,6 +36,11 @@ def fort_id(j,i,x):
 new_ids = [fort_id(j,i,x) for x,i,j in itertools.product(
                                        range(4*Nsite), range(2), range(3))]
 
+def matrec(r1, r2):
+    "Construct SU(3) matrix from first two rows."
+    r3 = np.conj(np.cross(r1, r2))
+    return np.array([r1,r2,r3])
+
 def main(files):
 
     tmp = readfort(files[0])
@@ -47,6 +52,10 @@ def main(files):
     v2 = tmp2[3], tmp2[4], tmp2[5]  # Second row of first matrx.
     print np.inner(v2, np.conj(v2))
     print np.inner(v, np.conj(v2))
+
+    x = matrec(v,v2)
+    assert x.shape == (3,3)
+    print np.dot(x, np.conj(np.transpose(x)))
 
     return 0
 
