@@ -6,7 +6,6 @@ from os.path import getsize
 nx, ny, nz, nt = 16, 16, 16, 16
 Nsite = nx*ny*nz*nt
 nc = 3
-ns = 4
 
 def readfort(file):
     '''Read gauge configuration from Fortran90 binary.
@@ -30,9 +29,10 @@ def readfort(file):
     return tmp
 
 def fort_id(j,i,x):
-    "Index structure of binary configurations."
+    '''Index structure of binary configurations. See lat.F.'''
     return j*2*Nsite*4 + i*Nsite*4 + x
 
+# Put into a more familiar matrix form.
 new_ids = [fort_id(j,i,x) for x,i,j in itertools.product(
                                        range(4*Nsite), range(2), range(3))]
 
