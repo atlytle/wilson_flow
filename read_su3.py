@@ -48,6 +48,8 @@ def reconstruct(config):
     dat = np.array(map(lambda x:matrec(x[0],x[1]), dat))
     assert dat.shape == (4*Nsite,3,3)
     
+    return dat
+    
 def main(files):
 
     tmp = readfort(files[0])
