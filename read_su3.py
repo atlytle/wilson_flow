@@ -40,7 +40,14 @@ def matrec(r1, r2):
     "Construct SU(3) matrix from first two rows."
     r3 = np.conj(np.cross(r1, r2))
     return np.array([r1,r2,r3])
-
+    
+def reconstruct(config):
+    "Reorder data and reconstruct configurations."
+    dat = config[new_ids]
+    dat = dat.reshape(4*Nsite,2,3)
+    dat = np.array(map(lambda x:matrec(x[0],x[1]), dat))
+    assert dat.shape == (4*Nsite,3,3)
+    
 def main(files):
 
     tmp = readfort(files[0])
