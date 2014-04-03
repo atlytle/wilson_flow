@@ -7,6 +7,15 @@ nx, ny, nz, nt = 16, 16, 16, 16
 Nsite = nx*ny*nz*nt
 nc = 3
 
+def readhead(filename):
+    "Read header of fortran binaries."
+    f = open(filename, "rb")
+    bsize = np.fromfile(f, dtype='>i', count=1)  # Bytes of actual data.
+    beta = np.fromfile(f, dtype='>d', count=1)  # Beta.
+    nf = np.fromfile(f, dtype='>i', count=1)  # Nflav.
+    # Haven't parsed other stuff.
+    return beta, nf
+
 def readfort(filename):
     '''Read gauge configuration from Fortran90 binary.
     
