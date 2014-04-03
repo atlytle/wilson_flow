@@ -47,7 +47,56 @@ def plaq(config):
                 plaq += tmp
     return np.trace(plaq/(6*Nsite)).real
     
+def F(config, xvec, mu, nu):
+    "Lattice field strength tensor F_{mu nu}."
+    F = np.zeros((3,3), dtype=complex)
+    mh = muhat(mu)
+    nh = muhat(nu)
+    
+    # Clover leaves.
+    m1 = config[ix(xvec, mu)]
+    m2 = config[ix(xvec+mh, nu)]
+    m3 = adj(config[ix(xvec+nh, mu)])
+    m4 = adj(config[ix(xvec, nu)])
+    F += reduce(np.dot, [m1, m2, m3, m4])
+    
+    m1 = config[ix(xvec, nu)]
+    m2 = adj(config[ix(xvec-mh+nh, mu)])
+    m3 = adj(config[ix(xvec-mh, nu)])
+    m4 = config[ix(xvec-mh, mu)]
+    F += reduce(np.dot, [m1, m2, m3, m4])
+    
+    m1 = adj(config[ix(xvec-mh, mu)])
+    m2 = adj(config[ix(xvec-mh-nh, nu)])
+    m3 = config[ix(xvec-mh-nh, mu)]
+    m4 = config[ix(xvec-nh, nu)]
+    F += reduce(np.dot, [m1, m2, m3, m4])
+    
+    m1 = adj(config[ix(xvec-nh, nu)])
+    m2 = config[ix(xvec-nh, mu)]
+    m3 = config[ix(xvec+mh-nh, nu)]
+    m4 = adj(config[ix(xvec, mu)])
+    F += reduce(np.dot, [m1, m2, m3, m4])
+    
+    F =(F - adj(F))/8
+    return F
+    
+def Fsq(config):
+    "Trace of F^2."
+    Fsq = np.zeros((3,3), dtype=complex)
+    for x, y, z, t in itertools.product(
+                       range(nx), range(ny), range(nz), range(nt)):
+        xvec = np.array([x,y,z,t])
+        for mu in range(4):
+            for nu in range(mu+1,4):
+                tmp = F(config, xvec, mu, nu)
+                Fsq += np.dot(tmp, tmp)
+                
+    return np.trace(Fsq)/Nsite/6
+    
+    
 def test_su3(config):
+    "Check all matrices are SU(3)."
     res = np.zeros((3,3), dtype=complex)
     for x, y, z, t in itertools.product(
                        range(nx), range(ny), range(nz), range(nt)):
@@ -67,18 +116,18 @@ def muhat(mu):
     if mu == 3:
         return np.array([0,0,0,1])
     
-def plaq2(config, xvec, mu, nu):
-    #ix = index
-    mh = muhat(mu)
-    nh = muhat(nu)
-    
-    # mult these
-    ix(xvec, mu)
-    ix(xvec+mh, nu)
-    
-    # conjugate mult these
-    ix(xvec, nu)
-    ix(xvec+nh, mu)
+#def plaq2(config, xvec, mu, nu):
+#    #ix = index
+#    mh = muhat(mu)
+#    nh = muhat(nu)
+#    
+#    # mult these
+#    ix(xvec, mu)
+#    ix(xvec+mh, nu)
+#    
+#    # conjugate mult these
+#    ix(xvec, nu)
+#    ix(xvec+nh, mu)
     
 def cmult(c1, c2):
     '''Multiply color matrices of configurations.'''
