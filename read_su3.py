@@ -7,7 +7,7 @@ nx, ny, nz, nt = 16, 16, 16, 16
 Nsite = nx*ny*nz*nt
 nc = 3
 
-def readfort(file):
+def readfort(filename):
     '''Read gauge configuration from Fortran90 binary.
     
     There are six complex entries per su3 matrix as only two rows are stored.
@@ -16,8 +16,8 @@ def readfort(file):
     '''
     csize = 16  # Complex number size in bytes.
     hsize = 96  # Header size in bytes.
-    assert getsize(file) == 4 + hsize + 4*Nsite*6*csize + 4
-    f = open(file, "rb")
+    assert getsize(filename) == 4 + hsize + 4*Nsite*6*csize + 4
+    f = open(filename, "rb")
     bsize = np.fromfile(f, dtype='>i', count=1)  # Bytes of actual data.
     assert bsize == hsize + 4*Nsite*6*csize
     f.seek(hsize, 1)  # Ignore header.
