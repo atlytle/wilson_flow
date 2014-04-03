@@ -16,7 +16,7 @@ def index(x,y,z,t,mu):
     if (x+y+z+t) % 2 == 0:
         return mu*nt*nz*ny*nx + (t*nz*ny*nx + z*ny*nx + y*nx + x)/2
     else:
-        return mu*nt*nz*ny*nx + Nsite/2 + (t*nz*ny*nx + z*ny*nx + y*nx + x - 1)/2 + 1
+        return mu*nt*nz*ny*nx + Nsite/2 + (t*nz*ny*nx + z*ny*nx + y*nx + x)/2
     
 def ix(xvec, mu):
     "Linear index corresponding to link (x,y,z,t,mu)."
@@ -28,11 +28,13 @@ def plaq(config):
     # Slow way of doing things, doesn't use numpy arrays well.
     # Instead you should allocate indice arrays, reorder and multiply.
     plaq = np.zeros((3,3), dtype=complex)
-    for x, y, z, t in itertools.product(
+    for mu in range(4):
+        for nu in range(mu):
+            print mu, nu
+            for x, y, z, t in itertools.product(
                        range(nx), range(ny), range(nz), range(nt)):
-        xvec = np.array([x,y,z,t])
-        for mu in range(4):
-            for nu in range(mu+1,4):
+                xvec = np.array([x,y,z,t])
+
                 mh = muhat(mu)
                 nh = muhat(nu)
                 
@@ -43,8 +45,8 @@ def plaq(config):
                 m4 = config[ix(xvec + nh, mu)]
                 
                 tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
-                #print np.trace(tmp).real
                 plaq += tmp
+            print (plaq/(6*Nsite)).real
     return np.trace(plaq/(6*Nsite)).real
     
 def F(config, xvec, mu, nu):

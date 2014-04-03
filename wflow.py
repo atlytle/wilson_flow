@@ -15,11 +15,11 @@ def main(files):
     dat = reconstruct(dat)
     print dat.shape
     #print test_su3(dat)
-    #print plaq(dat)
-    tmp = F(dat, (0,0,0,0), 0, 1)
-    print tmp
-    print np.dot(tmp, tmp)
-    print Fsq(dat)
+    print plaq(dat)
+    #tmp = F(dat, (0,0,0,0), 0, 1)
+    #print tmp
+    #print np.dot(tmp, tmp)
+    #print Fsq(dat)
     
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
