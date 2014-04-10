@@ -27,7 +27,7 @@ def plaq(config):
     "Calculate plaquette values on a configuration."
     # Slow way of doing things, doesn't use numpy arrays well.
     # Instead you should allocate indice arrays, reorder and multiply.
-    plaq = np.zeros((3,3), dtype=complex)
+    plaq = np.zeros((3,3), dtype=np.complex128)
     for mu in range(4):
         for nu in range(mu):
             print mu, nu
@@ -46,8 +46,59 @@ def plaq(config):
                 
                 tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
                 plaq += tmp
-            print (plaq/(6*Nsite)).real
+            #print (plaq/(6*Nsite)).real
     return np.trace(plaq/(6*Nsite)).real
+    
+def plaqt(config):
+    "Calculate temporal plaquette values on a configuration."
+    # Slow way of doing things, doesn't use numpy arrays well.
+    # Instead you should allocate indice arrays, reorder and multiply.
+    plaq = np.zeros((3,3), dtype=np.complex128)
+    for mu in 3,:
+        for nu in 0,1,2:
+            print mu, nu
+            for x, y, z, t in itertools.product(
+                       range(nx), range(ny), range(nz), range(nt)):
+                xvec = np.array([x,y,z,t])
+
+                mh = muhat(mu)
+                nh = muhat(nu)
+                
+                m1 = config[ix(xvec, mu)]
+                m2 = config[ix(xvec+mh, nu)]
+                
+                m3 = config[ix(xvec, nu)]
+                m4 = config[ix(xvec + nh, mu)]
+                
+                tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
+                plaq += tmp
+            #print (plaq/(3*Nsite)).real
+    return np.trace(plaq/(3*Nsite)).real
+    
+def plaqs(config):
+    "Calculate spatial plaquette values on a configuration."
+    # Slow way of doing things, doesn't use numpy arrays well.
+    # Instead you should allocate indice arrays, reorder and multiply.
+    plaq = np.zeros((3,3), dtype=np.complex128)
+    for mu, nu in (1,2), (1,0), (2,0):
+        print mu, nu
+        for x, y, z, t in itertools.product(
+                   range(nx), range(ny), range(nz), range(nt)):
+            xvec = np.array([x,y,z,t])
+
+            mh = muhat(mu)
+            nh = muhat(nu)
+            
+            m1 = config[ix(xvec, mu)]
+            m2 = config[ix(xvec+mh, nu)]
+            
+            m3 = config[ix(xvec, nu)]
+            m4 = config[ix(xvec + nh, mu)]
+            
+            tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
+            plaq += tmp
+        #print (plaq/(3*Nsite)).real
+    return np.trace(plaq/(3*Nsite)).real
     
 def F(config, xvec, mu, nu):
     "Lattice field strength tensor F_{mu nu}."
