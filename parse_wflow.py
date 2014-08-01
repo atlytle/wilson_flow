@@ -15,17 +15,17 @@ def convert_block(block):
     return block
 
 def file2numpy(filename):
+    "Convert wflow output files to numpy data."
     with open(filename, 'r') as f:
         lines = f.readlines()
     
     # Extract blocks of data from the output file.
-    i = 0
+    nconfig = 0
     blocks = []
     for x in lines:
         if x.strip() == 'Wilson flow: program version    1.000':
-            blocks.append(lines[i+offset:i+offset+nstep])
-        i+=1
-    del i
+            blocks.append(lines[nconfig+offset:nconfig+offset+nstep])
+        nconfig+=1
     del lines
 
     # Convert to numerical data.
@@ -36,7 +36,7 @@ def file2numpy(filename):
 def main(argv):
     blocks = file2numpy(argv[0])
     
-    print blocks[:,:,1].shape
+    print blocks[:,:,1].shape  # (nconfig, nstep, nmeas)
     print blocks[0,:,1]
 
 if __name__ == "__main__":
