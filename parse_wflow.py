@@ -33,6 +33,10 @@ def file2numpy(filename):
     blocks = np.array(blocks)
     return blocks
 
+def file2gnuplot(filename):
+    "Convert wflow output files to gnuplot files."
+    pass
+
 def main(argv):
     blocks = file2numpy(argv[0])
     
