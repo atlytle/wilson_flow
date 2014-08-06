@@ -3,3 +3,6 @@ Implements the Wilson flow.
 parse_wflow.py - 
     Read raw data from Sourendu's wflow (fortran) output.
     Convert to numpy arrays.
+
+analyze_wflow.py -
+    Analysis and plotting routines.
