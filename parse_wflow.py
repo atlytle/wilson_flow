@@ -6,8 +6,6 @@ Convert to numpy arrays.
 import sys
 import numpy as np
 
-offset = 8
-nstep = 100
 def convert_block(block):
     "Convert a block of wflow data (one configuration) to floats."
     block = [x.strip().split('  ') for x in block]
@@ -15,18 +13,25 @@ def convert_block(block):
     return block
 
 def file2numpy(filename):
-    "Convert wflow output files to numpy data."
+    """Convert wflow output files to numpy data.
+    """
+    
     with open(filename, 'r') as f:
         lines = f.readlines()
     
+    offset = 8
     # Extract blocks of data from the output file.
-    nconfig = 0
+    i = 0
     blocks = []
     for x in lines:
-        if x.strip() == 'Wilson flow: program version    1.000':
-            blocks.append(lines[nconfig+offset:nconfig+offset+nstep])
-        nconfig+=1
-    del lines
+        if x.strip() == 'Wilson flow: program version    1.000':  # Begin block.
+            block = []
+            for y in lines[i+offset:]:
+                if y.strip() == '':  # End block.
+                    break
+                block.append(y.strip())
+            blocks.append(block)
+        i+=1
 
     # Convert to numerical data.
     blocks = map(convert_block, blocks)
@@ -41,7 +46,7 @@ def main(argv):
     blocks = file2numpy(argv[0])
     
     print blocks[:,:,1].shape  # (nconfig, nstep, nmeas)
-    print blocks[0,:,1]
+    print blocks[0,:,2]
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
