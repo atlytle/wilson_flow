@@ -12,6 +12,27 @@ def convert_block(block):
     block = [map(float, x) for x in block]
     return block
 
+def strip_blocks(lines, offset):
+    """Pull out numerical blocks of data from wflow output.
+    
+    offset gives the linelength of the header parts.
+    """
+    i = 0
+    blocks = []
+    for x in lines:
+        if x.strip() == 'Wilson flow: program version    1.000':  # Begin block.
+            block = []
+            for y in lines[i+offset:]:
+                if y.strip() == '':  # End block.
+                    break
+                block.append(y.strip())
+            blocks.append(block)
+        i+=1
+    # Convert to numerical data.
+    blocks = map(convert_block, blocks)
+    
+    return blocks
+
 def file2numpy(filename):
     """Convert wflow output files to numpy data.
     """
