@@ -19,15 +19,32 @@ def inname(L, B, m):
 def dfb(ns):
     """Symmetric difference of a series.
     Forward and backward difference used for endpoints.
+    ... notation makes it work with 1d time series, or a stack of time series.
     """
-    result = np.zeros((len(ns)))
+    result = np.zeros(ns.shape)
     # Endpoints.
-    result[0] = ns[1]-ns[0]
-    result[-1] = ns[-1] - ns[-2]
+    result[...,0] = ns[...,1]-ns[...,0]
+    result[...,-1] = ns[...,-1] - ns[...,-2]
     # Interior.
-    result[1:-1] = (ns[2:] - ns[:-2])/2.
+    result[...,1:-1] = (ns[...,2:] - ns[...,:-2])/2.
     
     return result
+
+def dfb2(f):
+    """More accurate estimate of the derivative -- O(dt^4) in the interior.
+    """
+    df = np.zeros(f.shape)
+    # Endpoints.
+    df[...,0] = f[...,1]-f[...,0]  
+    df[...,-1] = f[...,-1] - f[...,-2]  # O(dt).  
+    df[...,1] = (f[...,2]-f[...,0])/2.
+    df[...,-2] = (f[...,-1] - f[...,-3])/2.  # O(dt^2).
+    # Interior.
+    df[...,2:-2] = -f[...,4:]/12. +\
+                  (2/3.)*(f[...,3:-1] - f[...,1:-3]) + f[...,:-4]/12.
+
+    return df
+
 
 def broot(f, xi, xf, tol=0.0001):
     '''Find a root of f(x) in [xi,xf] via bisection.
@@ -61,28 +78,37 @@ def plot_items(items):
 def main(argv):
     dat1 = file2numpy(inname(16,5.2875,0.025))
     dat2 = file2numpy(inname(16, 5.4, 0.025))
-    nconf, nstep, nmeas = dat1.shape
+    dat3 = file2numpy(inname(24, 5.6, 0.025))
+    
+    nconf, nstep, nmeas = dat3.shape
+    dt = 0.01
 
     #plot_items([dat1[x,:,2] for x in range(1,nconf)])#, dat1[0,:,2], dat2[0,:,1], dat2[0,:,2]])
 
-    #JKblock
-    t2E = JK_block(dat1[1:,:,2])
-    #print JKsigma(t2E)
-    t = np.linspace(0,1.0,nstep)
-    #plot_items([t2E[0], 100*t*dfb(t2E[0])])
+    # JKblock.
     
-    nconf = dat2.shape[0]
-    #plot_items([dat2[x,:,2] for x in range(1,nconf)])
-    t2E_2 = JK_block(dat2[:,:,2])
-    #plot_items([t2E_2[0], 100*t*dfb(t2E_2[0])])
+    t2E = JK_block(dat3[1:,:,2])
+    t = np.linspace(0,dt*nstep,nstep)
+    #plot_items([t2E[0], 100*t*dfb(t2E[0])])
+    #plot_items([x for x in t2E])
 
-    #plot
-    #extract t0
-    f=interp1d(t,t2E[0]-0.3, kind='cubic')
-    g=interp1d(t, 100*t*dfb(t2E[0])-0.3, kind='cubic')
-    print broot(f,0.01,0.99)
-    print broot(g,0.01,0.99)
-    #extract w0
+    error = JKsigma(t2E)
+    error_dt = t*JKsigma(dfb2(t2E))/dt
+
+    # Plot.
+
+    p.errorbar(range(nstep),t2E[0]+error)
+    p.errorbar(range(nstep),t2E[0]-error)
+    p.errorbar(range(nstep),t*dfb2(t2E[0])/dt+error_dt)
+    p.errorbar(range(nstep),t*dfb2(t2E[0])/dt-error_dt)
+    p.show()
+
+    # Extract t0, w0.
+
+    #f=interp1d(t,t2E[0]-0.3, kind='cubic')
+    #g=interp1d(t, 100*t*dfb(t2E[0])-0.3, kind='cubic')
+    #print broot(f,0.01,0.99)
+    #print broot(g,0.01,0.99)
     return 0
     
 if __name__ == "__main__":
