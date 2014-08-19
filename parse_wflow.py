@@ -41,23 +41,9 @@ def file2numpy(filename):
         lines = f.readlines()
     
     offset = 8
-    # Extract blocks of data from the output file.
-    i = 0
-    blocks = []
-    for x in lines:
-        if x.strip() == 'Wilson flow: program version    1.000':  # Begin block.
-            block = []
-            for y in lines[i+offset:]:
-                if y.strip() == '':  # End block.
-                    break
-                block.append(y.strip())
-            blocks.append(block)
-        i+=1
-
-    # Convert to numerical data.
-    blocks = map(convert_block, blocks)
-    blocks = np.array(blocks)
-    return blocks
+    blocks = strip_blocks(lines, offset)
+    
+    return np.array(blocks)
 
 def file2gnuplot(filename):
     "Convert wflow output files to gnuplot files."
