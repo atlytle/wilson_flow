@@ -6,3 +6,6 @@ parse_wflow.py -
 
 analyze_wflow.py -
     Analysis and plotting routines.
+
+diagnostics.py -
+    Assess dt, integrator dependence, etc. of wflow observables.
