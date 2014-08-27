@@ -7,7 +7,6 @@ nc = 3
 
 adj = lambda x: np.transpose(np.conj(x))  # Adjoint.
 
-
 # Could just store all indexing info and avoid function calls?
 def index(x,y,z,t,mu):
     "Linear index corresponding to link (x,y,z,t,mu)."
@@ -67,7 +66,7 @@ def plaq(config):
                 
                 tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
                 plaq += tmp
-            #print (plaq/(6*Nsite)).real
+    
     return np.trace(plaq/(6*Nsite)).real
     
 def plaqt(config):
@@ -93,7 +92,7 @@ def plaqt(config):
                 
                 tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
                 plaq += tmp
-            #print (plaq/(3*Nsite)).real
+    
     return np.trace(plaq/(3*Nsite)).real
     
 def plaqs(config):
@@ -118,7 +117,7 @@ def plaqs(config):
             
             tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
             plaq += tmp
-        #print (plaq/(3*Nsite)).real
+    
     return np.trace(plaq/(3*Nsite)).real
     
 def F(config, xvec, mu, nu):
@@ -151,10 +150,13 @@ def F(config, xvec, mu, nu):
     m3 = config[ix(xvec+mh-nh, nu)]
     m4 = adj(config[ix(xvec, mu)])
     F += reduce(np.dot, [m1, m2, m3, m4])
+   
+    trF = np.trace(F)
+    F -= trF*np.identity(3)/3.  # Remove trace.
     
     F =(F - adj(F))/8
     return F
-    
+
 def Fsq(config):
     "Trace of F^2."
     Fsq = np.zeros((3,3), dtype=complex)
@@ -164,9 +166,9 @@ def Fsq(config):
         for mu in range(4):
             for nu in range(mu+1,4):
                 tmp = F(config, xvec, mu, nu)
-                Fsq += np.dot(tmp, tmp)
+                Fsq += np.dot(tmp, adj(tmp))
                 
-    return np.trace(Fsq)/Nsite/6
+    return np.trace(Fsq)/Nsite
     
 def Z(config):
     '''Force matrix used to update configurations in Wilson Flow.
@@ -245,4 +247,20 @@ def muhat(mu):
 def cmult(c1, c2):
     '''Multiply color matrices of configurations.'''
     pass
+
+def main():
+    print index(0,0,0,0,0)
+    print index(1,0,0,0,0)
+    print index(1,1,0,0,1)
+    print index(0,0,0,1,3)
+    print index(4,6,9,9,2)
+    print index(7,17,15,17,3)
+    print index(2,0,0,0,0)
+    print index(1,0,0,0,0)
+    print index(-1,0,0,0,0)
+    print index(15,0,0,0,0)
+
+
+if __name__ == "__main__":
+    main()
     
