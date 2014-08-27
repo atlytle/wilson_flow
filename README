@@ -1,5 +1,8 @@
 Implements the Wilson flow.
 
+read_su3.py -
+    Read binary gauge field data. Reconstruct SU(3) matrices.
+
 parse_wflow.py - 
     Read raw data from Sourendu's wflow (fortran) output.
     Convert to numpy arrays.
