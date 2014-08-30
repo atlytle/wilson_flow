@@ -43,6 +43,7 @@ def test_index():
     for i in range(4*Nsite):
         assert i == ix(*fx(i))
 
+
 def plaq(config):
     "Calculate plaquette values on a configuration."
     # Slow way of doing things, doesn't use numpy arrays well.
@@ -93,7 +94,7 @@ def plaqt(config):
                 tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
                 plaq += tmp
     
-    return np.trace(plaq/(3*Nsite)).real
+    return np.trace(plaq/(3*Nsite))
     
 def plaqs(config):
     "Calculate spatial plaquette values on a configuration."
@@ -118,7 +119,7 @@ def plaqs(config):
             tmp = np.dot(np.dot(m1,m2), adj(np.dot(m3,m4)))
             plaq += tmp
     
-    return np.trace(plaq/(3*Nsite)).real
+    return np.trace(plaq/(3*Nsite))
     
 def F(config, xvec, mu, nu):
     "Lattice field strength tensor F_{mu nu}."
@@ -246,7 +247,8 @@ def muhat(mu):
     
 def cmult(c1, c2):
     '''Multiply color matrices of configurations.'''
-    pass
+    tmp = map(np.dot, c1, c2)
+    return np.array(tmp)
 
 def main():
     print index(0,0,0,0,0)
