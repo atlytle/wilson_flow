@@ -83,7 +83,9 @@ def main(files):
     dat = np.array(map(lambda x:matrec(x[0],x[1]), dat))
     assert dat.shape == (4*Nsite,3,3)
     print np.dot(dat[42], np.conj(np.transpose(dat[42])))
+    print ''
     print dat[0]
+    print dat[1]
 
     return 0
     

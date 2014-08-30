@@ -20,7 +20,10 @@ def strip_blocks(lines, offset):
     i = 0
     blocks = []
     for x in lines:
-        if x.strip() == 'Wilson flow: program version    1.000':  # Begin block.
+        # Checking for start of data blocks.
+        match1 = x.strip() == 'Wilson flow: program version    1.000'
+        match2 = x.strip() == 'Begin wflow.'
+        if match1 or match2:  # Begin block.
             block = []
             for y in lines[i+offset:]:
                 if y.strip() == '':  # End block.
@@ -33,14 +36,13 @@ def strip_blocks(lines, offset):
     
     return blocks
 
-def file2numpy(filename):
+def file2numpy(filename, offset=8):
     """Convert wflow output files to numpy data.
     """
     
     with open(filename, 'r') as f:
         lines = f.readlines()
     
-    offset = 8
     blocks = strip_blocks(lines, offset)
     
     return np.array(blocks)
