@@ -207,7 +207,7 @@ def Z(config):
 def Hproject(M):
     "Convert M to a traceless anti-Hermitian matrix."
     tmp = M - adj(M)
-    return tmp/2. - np.trace(tmp)/6.
+    return tmp/2. - np.trace(tmp)*np.identity(3)/6.
             
     
     
