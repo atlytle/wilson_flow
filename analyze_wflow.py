@@ -11,6 +11,8 @@ from scipy.interpolate import interp1d
 from parse_wflow import file2numpy
 from resample import JK_block, JKsigma
 
+np.set_printoptions(precision=4)
+
 def inname(L, B, m, id=''):
     root = "/Users/atlytle/Documents/wflow_out/"
     file = "output_{0}.{0}.{0}.{0}_{1}_{2}{3}.txt".format(L, B, m, id)
@@ -76,40 +78,53 @@ def plot_items(items):
     p.show()
 
 def main(argv):
-    #dat1 = file2numpy(inname(16,5.2875,0.025))
-    dat2 = file2numpy(inname(16, 5.4, 0.025))
-    #dat3 = file2numpy(inname(24, 5.6, 0.025))
-
-    dat4 = file2numpy(inname(16, 5.4, 0.025, '_s'), 2)
-
-    print dat4[0][0]
-    print dat4.shape
-    nconf, nstep, nmeas = dat4.shape
     dt = 0.01
+    dat1 = file2numpy(inname(16,5.2875,0.025), offset=8) # erratic 1.
+    dat2 = file2numpy(inname(16, 5.4, 0.025), offset=8)
+    dat3 = file2numpy(inname(24, 5.6, 0.025), offset=8)
+    dat4 = file2numpy(inname(16, 5.4, 0.025, '_s'), offset=2)
+    dat5 = file2numpy(inname(16, 5.4, 0.025, 'b'), offset=10)
+    dat6 = file2numpy(inname(16, 5.4, 0.015, 'b'), offset=9)
+    dat7 = file2numpy(inname(16, 5.4, 0.05, 'b'), offset=9)  # erratic 1-4.
+    dat8 = file2numpy(inname(16, 5.5, 0.025, 'b'), offset=9)
+    dat9 = file2numpy(inname(16, 5.5, 0.05, 'b'), offset=9)
+    dat10 = file2numpy(inname(16, 5.6, 0.025, 'b'), offset=9)
+    dat11 = file2numpy(inname(16,5.2875,0.025, 'b'), offset=9) # erratic 1?
 
-    #plot_items ([dat4[x,:,2] for x in range(nconf)])
 
-    #plot_items([dat1[x,:,2] for x in range(1,nconf)])#, dat1[0,:,2], dat2[0,:,1], dat2[0,:,2]])
+    for d in dat1, dat2, dat3, dat4, dat5, dat6, dat7, dat8, dat9, dat10, dat11:
+        print d.shape
+
+    for d in dat10, dat11:
+        nconf, nstep, nmeas = d.shape
+        plot_items([d[x,:,3] for x in range(nconf)])
+
+    print 1.5*dat1[1,:,2]
+    print dat11[1,:,1]
+
+    #plot_items([dat7[x,:,1] for x in range(4)])
+    #plot_items([dat7[x,:,1] for x in range(4,16)])
+
 
     # JKblock.
-    nconf, nstep, nmeas = dat2.shape
-    t2E = 1.5*JK_block(dat2[:16,:,2])
-    t = np.linspace(dt, dt*nstep, nstep)
-    p.xlim([0,2])
-    p.errorbar(t, t2E[0])
-    p.errorbar(t, t*dfb2(t2E[0])/dt, fmt='k')
-    p.errorbar(t, 1.5*dat2[0,:,2], fmt='--')
+    # nconf, nstep, nmeas = dat2.shape
+    # t2E = 1.5*JK_block(dat2[:16,:,2])
+    # t = np.linspace(dt, dt*nstep, nstep)
+    # p.xlim([0,2])
+    # p.errorbar(t, t2E[0])
+    # p.errorbar(t, t*dfb2(t2E[0])/dt, fmt='k')
+    # p.errorbar(t, 1.5*dat2[0,:,2], fmt='--')
 
-    nconf, nstep, nmeas = dat4.shape
-    t2E = JK_block(dat4[:,:,2])
-    t = np.linspace(0,dt*nstep,nstep)
-    p.errorbar(t, t2E[0])
-    p.errorbar(t, t*dfb2(t2E[0])/dt)
-    p.errorbar(t, dat4[0,:,2], fmt='--')
+    # nconf, nstep, nmeas = dat4.shape
+    # t2E = JK_block(dat4[:,:,2])
+    # t = np.linspace(0,dt*nstep,nstep)
+    # p.errorbar(t, t2E[0])
+    # p.errorbar(t, t*dfb2(t2E[0])/dt)
+    # p.errorbar(t, dat4[0,:,2], fmt='--')
 
 
     
-    p.show()
+    # p.show()
     
     #t2E = JK_block(dat3[1:,:,2])
     #t = np.linspace(0,dt*nstep,nstep)
