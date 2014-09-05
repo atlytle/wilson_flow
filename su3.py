@@ -188,11 +188,13 @@ def Z(config):
         Zxmu = np.zeros((3,3), dtype=complex)
         for nu in d:
             nh = muhat(nu)
+            
             # Staple up.
             m2 = config[ix(xvec+mh, nu)]
             m3 = adj(config[ix(xvec+nh, mu)])
             m4 = adj(config[ix(xvec, nu)])
             su = reduce(np.dot, [m1,m2,m3,m4])
+           
             # Staple down.
             m5 = adj(config[ix(xvec-nh+mh, nu)])
             m6 = adj(config[ix(xvec-nh, mu)])

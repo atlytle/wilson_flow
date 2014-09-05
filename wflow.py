@@ -17,8 +17,9 @@ def main(files):
     dat = reconstruct(dat)
     #print dat.shape
     #print test_su3(dat)
+    
     print 'Calculating plaq..'
-    print 'plaq:', plaq(dat)
+    print 'plaqt:', plaqt(dat)
     
     #print 'plaqt:', plaqt(dat)
     #print 'plaqs:', plaqs(dat)
@@ -30,28 +31,32 @@ def main(files):
     #print Fsq(dat)
 
     dt = .01
+    # print 'Calculating force term..'
+    # z = Z(dat)
+    # print 'Exponentiating force term..'
+    # expZ = map(expsu3, -1j*dt*z)
+    # #print test_su3(expZ)
+    # print 'Updating gauge field..'
+    # dat = cmult(expZ,dat)
+
+    # print 'Calculating plaq..'
+    # print 'plaq:', plaq(dat)
+
     print 'Calculating force term..'
     z = Z(dat)
+    #print "z[0]"
+    #print z[0]
+    #print ""
     print 'Exponentiating force term..'
     expZ = map(expsu3, -1j*dt*z)
-    #print test_su3(expZ)
+    #print expZ[0]
+    # print test_su3(expZ)
     print 'Updating gauge field..'
     dat = cmult(expZ,dat)
 
     print 'Calculating plaq..'
-    print 'plaq:', plaq(dat)
-
-    print 'Calculating force term..'
-    z = Z(dat)
-    print 'Exponentiating force term..'
-    expZ = map(expsu3, -1j*dt*z)
-    #print test_su3(expZ)
-    print 'Updating gauge field..'
-    dat = cmult(expZ,dat)
-
-    print 'Calculating plaq..'
-    print 'plaq:', plaq(dat)
-
+    print 'plaqt:', plaqt(dat)
+    #print expsu3(-1j*z[0])
 
 
     print 'done.'

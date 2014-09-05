@@ -26,7 +26,7 @@ def expsu3(M):
     w = sqrt(c1)*sin(th/3)
     ww = w*w
     d = 9*uu - ww
-    e2iu = exp(2j*u) 
+    e2iu = exp(2j*u)
     emiu = exp(-1j*u)
     cw = cos(w)
     
